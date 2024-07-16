@@ -7,6 +7,7 @@ namespace InvoiceApp.Services.Interfaces
     {
         Item GetItem(int Id);
         Item GetItemByName(string Name);
-        bool UpdateItem(ItemDto item, int id); 
+        bool UpdateItem(ItemDto item, int id);
+        List<Item> GetItemsById(List<int> ids);
     }
 }

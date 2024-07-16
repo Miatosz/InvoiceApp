@@ -1,4 +1,5 @@
-﻿using InvoiceApp.Domain;
+﻿using Common.Logging;
+using InvoiceApp.Domain;
 using InvoiceApp.Domain.Entities;
 using InvoiceApp.Services.Interfaces;
 using InvoiceApp.Services.Models;
@@ -9,12 +10,16 @@ namespace InvoiceApp.Services.Services
 {
     public class InvoiceService : IInvoiceService
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(InvoiceService));
 
         public Invoice GetInvoice(int id)
         {
             using (var context = new InvoiceAppContext())
             {
-                var invoice = context.Invoice.Find(id);
+                var invoice = context.Invoice
+                    .Include(i => i.Buyer)
+                    .Include(i => i.User)
+                    .FirstOrDefault(i => i.Id == id);
                 return invoice ?? new Invoice();
             }
         }
@@ -23,7 +28,10 @@ namespace InvoiceApp.Services.Services
         {
             using (var context = new InvoiceAppContext())
             {
-                var invoice = context.Invoice.FirstOrDefault(x => x.InvoiceNumber == invoiceNumber);
+                var invoice = context.Invoice
+                    .Include(i => i.Buyer)
+                    .Include(i => i.User)
+                    .FirstOrDefault(x => x.InvoiceNumber == invoiceNumber);
                 return invoice ?? new Invoice();
             }
         }
@@ -33,7 +41,11 @@ namespace InvoiceApp.Services.Services
             using (var context = new InvoiceAppContext())
             {
                 var invoices = new List<Invoice>();
-                invoices = context.Invoice.Where(inv =>  inv.UserId == userId).ToList();
+                invoices = context.Invoice
+                    .Include(i => i.Buyer)
+                    .Include(i => i.User)
+                    .Where(inv =>  inv.UserId == userId)
+                    .ToList();
                 return invoices;
             }
         }
@@ -67,6 +79,7 @@ namespace InvoiceApp.Services.Services
             }
             catch (Exception ex)
             {
+                Logger.Error($"Error on updating invoice - {id}", ex);
                 return false;
             }
         }
@@ -98,6 +111,7 @@ namespace InvoiceApp.Services.Services
             }
             catch (Exception ex)
             {
+                Logger.Error("Error on adding invoice", ex);
                 return new Invoice();
             }
         }

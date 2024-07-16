@@ -1,4 +1,5 @@
-﻿using InvoiceApp.Domain;
+﻿using Common.Logging;
+using InvoiceApp.Domain;
 using InvoiceApp.Domain.Entities;
 using InvoiceApp.Services.Interfaces;
 using InvoiceApp.Services.Models;
@@ -7,6 +8,7 @@ namespace InvoiceApp.Services.Services
 {
     public class ContractorService : IContractorService
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ContractorService));
         public Contractor GetContractor(int id)
         {
             using (var context = new InvoiceAppContext())
@@ -50,6 +52,7 @@ namespace InvoiceApp.Services.Services
             }
             catch (Exception ex)
             {
+                Logger.Error($"Error on updating contractor - {id}", ex);
                 return false;
             }
         }

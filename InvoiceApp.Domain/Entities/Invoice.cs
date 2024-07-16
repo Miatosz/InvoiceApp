@@ -23,5 +23,7 @@ namespace InvoiceApp.Domain.Entities
         [ForeignKey("UserId")]
         public User User { get; set; }
 
+        public string Items { get; set; }
+
     }
 }

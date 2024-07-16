@@ -107,6 +107,10 @@ namespace InvoiceApp.Domain.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Items")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<float>("LeftToPay")
                         .HasColumnType("real");
 

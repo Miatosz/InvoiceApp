@@ -1,4 +1,5 @@
-﻿using InvoiceApp.Domain;
+﻿using Common.Logging;
+using InvoiceApp.Domain;
 using InvoiceApp.Domain.Entities;
 using InvoiceApp.Services.Interfaces;
 using InvoiceApp.Services.Models;
@@ -8,6 +9,7 @@ namespace InvoiceApp.Services.Services
 {
     public class ItemService : IItemService
     {
+        private static readonly ILog Logger = LogManager.GetLogger(typeof(ItemService));
         public Item GetItem(int id)
         {
             using (var context = new InvoiceAppContext())
@@ -24,6 +26,16 @@ namespace InvoiceApp.Services.Services
                 var item = context.Item.FirstOrDefault(x => x.Name == Name);
                 return item ?? new Item();
             }
+        }
+
+        public List<Item> GetItemsById(List<int> ids)
+        {
+            var items = new List<Item>();
+            foreach (var id in ids) 
+            {
+                items.Add(GetItem(id));
+            }
+            return items;
         }
 
         public bool UpdateItem(ItemDto item, int id)
@@ -51,6 +63,7 @@ namespace InvoiceApp.Services.Services
             }
             catch (Exception ex)
             {
+                Logger.Error($"Error on updating item - {id}", ex);
                 return false;
             }
         }

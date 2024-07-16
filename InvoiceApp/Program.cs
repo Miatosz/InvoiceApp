@@ -1,8 +1,6 @@
-using Autofac.Extensions.DependencyInjection;
 using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using InvoiceApp.Domain;
-using InvoiceApp.Services.Interfaces;
-using InvoiceApp.Services.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace InvoiceApp
@@ -21,12 +19,11 @@ namespace InvoiceApp
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
 
-            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-
-            builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
-            {
-                containerBuilder.RegisterType<InvoiceService>().As<IInvoiceService>();
-            });
+            builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory())
+                .ConfigureContainer<ContainerBuilder>(builder =>
+                {
+                    builder.RegisterModule(new AutofacModule());
+                });
 
             var app = builder.Build();
 
